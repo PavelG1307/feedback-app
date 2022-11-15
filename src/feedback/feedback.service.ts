@@ -8,6 +8,7 @@ export class FeedbackService {
   get(filters: GetFeedbackDto): string {
     return `get from ${filters.dateFrom} to ${filters.dateTo}`;
   }
+
   async update() {
     const url = 'https://api.delivery-club.ru/api1.2/reviews';
     const parseFeedback = async (limit, offset) => {
@@ -24,7 +25,8 @@ export class FeedbackService {
         .toPromise();
       return response.data;
     };
-    const feedbacks = await parseFeedback(1, 0);
+    const feedbacks = await parseFeedback(50, 0);
+    console.log(feedbacks);
     const total = feedbacks.total;
     const maxLimit = 100;
     for (let i; i < total / maxLimit; i++) {
