@@ -1,14 +1,18 @@
-import { Controller, Get, Param, Post } from '@nestjs/common';
+import { Controller, Get, Post, Put, Query } from '@nestjs/common';
+import { GetFeedbackDto } from './dto/get-feedback.dto';
+import { FeedbackService } from './feedback.service';
 
 @Controller('feedback')
 export class FeedbackController {
-  @Get(':id')
-  create(@Param('id') id: string) {
-    return `get ${id}`;
-  }
+  constructor(private readonly FeedbackService: FeedbackService) {}
 
   @Get()
-  getAll() {
-    return 'getAll';
+  get(@Query() filters: GetFeedbackDto): string {
+    return this.FeedbackService.get(filters);
+  }
+
+  @Put()
+  update() {
+    return this.FeedbackService.update();
   }
 }
