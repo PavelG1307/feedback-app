@@ -7,9 +7,10 @@ import {
 
 export const initSwagger = (app: INestApplication) => {
   const config = new DocumentBuilder()
-    .setTitle('The startup API Docs')
+    .setTitle('KFC reviews app')
     .setVersion('1.0.0')
-    .addTag('events')
+    .setDescription('Test assignment for a backend developer vacancy')
+    .addTag('Reviews app')
     .build()
 
   const options: SwaggerDocumentOptions = {
@@ -17,5 +18,5 @@ export const initSwagger = (app: INestApplication) => {
   }
 
   const document = SwaggerModule.createDocument(app, config, options)
-  SwaggerModule.setup(process.env.API_PREFIX, app, document)
+  SwaggerModule.setup(process.env.API_PREFIX + '/docs', app, document)
 }

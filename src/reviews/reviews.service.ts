@@ -2,6 +2,7 @@ import { HttpService } from '@nestjs/axios'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { GetReviewsDto } from './dto/get-reviews.dto'
+import { ResponseGetReviewsDto } from './dto/res-get-update.dto'
 import { Reviews } from './models/review'
 
 @Injectable()
@@ -12,10 +13,10 @@ export class ReviewsService {
     private readonly httpService: HttpService,
   ) { }
 
-  get(filters: GetReviewsDto): Promise<{ count: number, rows: Reviews[] }> {
+  async get(filters: GetReviewsDto): Promise<ResponseGetReviewsDto> {
     if (filters?.order && filters?.order !== 'DESC' && filters?.order !== 'ASC') return null
     const order: [] | [[string, 'DESC' | 'ASC']] = filters.orderBy ? [[filters.orderBy, filters?.order || 'DESC']] : []
-    const reviews = this.reviewsModel.findAndCountAll({
+    const reviews = await this.reviewsModel.findAndCountAll({
       order,
       where: {
         author: filters?.byAuthor,
@@ -26,7 +27,7 @@ export class ReviewsService {
       offset: Number(filters.offset) || 0,
       limit: Number(filters.limit) || 20
     })
-    return reviews
+    return { count: reviews.count, reviews: reviews.rows }
   }
 
   async update(): Promise<number> {
