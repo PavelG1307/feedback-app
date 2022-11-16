@@ -1,11 +1,9 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { SequelizeModule } from '@nestjs/sequelize';
-import { getEnvFilePath } from './core/utils';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { ReviewsModule } from './reviews/reviews.module';
-import { Reviews } from './reviews/models/review';
+import { Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
+import { SequelizeModule } from '@nestjs/sequelize'
+import { getEnvFilePath } from './core/utils'
+import { ReviewsModule } from './reviews/reviews.module'
+import { Reviews } from './reviews/models/review'
 
 @Module({
   imports: [
@@ -24,7 +22,7 @@ import { Reviews } from './reviews/models/review';
     }),
     ReviewsModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
-export class AppModule {}
+export class AppModule { }

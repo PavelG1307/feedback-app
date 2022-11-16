@@ -5,8 +5,8 @@ import {
   DataType,
   UpdatedAt,
   CreatedAt,
-} from 'sequelize-typescript';
-import { AnswerDto } from '../dto/answer.dto';
+} from 'sequelize-typescript'
+import { AnswerDto } from '../dto/answer.dto'
 
 @Table({
   tableName: 'reviews',
@@ -18,32 +18,32 @@ export class Reviews extends Model<Reviews> {
     autoIncrement: true,
     primaryKey: true,
   })
-  declare id?: number;
+  declare id?: number
 
   @Column({ type: DataType.UUID })
-  declare uuid?: string;
+  declare uuid?: string
 
   @Column({ type: DataType.STRING })
-  declare body: string;
+  declare body: string
 
   @Column({ type: DataType.STRING })
-  declare author: string;
+  declare author: string
 
   @Column({ type: DataType.DATE })
-  declare rated: Date;
+  declare rated: Date
 
   @Column({ type: DataType.ARRAY(DataType.JSON) })
-  declare answers?: AnswerDto;
+  declare answers?: AnswerDto
 
   @Column({
     type: DataType.DATE,
   })
   @CreatedAt
-  declare createdAt?: Date;
+  declare createdAt?: Date
 
   @Column({
     type: DataType.DATE,
   })
   @UpdatedAt
-  declare updatedAt?: Date;
+  declare updatedAt?: Date
 }

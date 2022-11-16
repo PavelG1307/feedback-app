@@ -1,1 +1,1 @@
-export const getEnvFilePath = () => `.env.${process.env.NODE_ENV}`;
+export const getEnvFilePath = () => `.env.${process.env.NODE_ENV}`
