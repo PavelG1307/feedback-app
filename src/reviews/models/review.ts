@@ -16,17 +16,20 @@ export class Reviews extends Model<Reviews> {
   @Column({
     type: DataType.INTEGER,
     autoIncrement: true,
-    primaryKey: true,
+    primaryKey: true
   })
   declare id?: number
 
-  @Column({ type: DataType.STRING })
+  @Column({ type: DataType.TEXT })
   declare body: string
 
-  @Column({ type: DataType.STRING })
+  @Column({ type: DataType.TEXT })
+  declare icon: string
+
+  @Column({ type: DataType.TEXT })
   declare author: string
 
-  @Column({ type: DataType.STRING, unique: true })
+  @Column({ type: DataType.TEXT, unique: true })
   declare orderHash: string
 
   @Column({ type: DataType.DATE })

@@ -1,9 +1,9 @@
 import { NestFactory } from '@nestjs/core'
-import { AppModule } from './app.module'
-import { corsOptions } from './core/config/cors'
-import helmet from 'helmet'
 import { ValidationPipe } from '@nestjs/common'
 import * as compression from 'compression'
+import helmet from 'helmet'
+import { AppModule } from './app.module'
+import { corsOptions } from './core/config/cors'
 import { initSwagger } from './core/lib/swagger'
 import { EXIT_CODES } from './core/constants'
 
