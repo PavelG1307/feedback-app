@@ -35,9 +35,11 @@ export class ReviewsService {
     return { count: reviews.count, reviews: reviews.rows }
   }
 
-  async update(chainId?): Promise<number> | never{
-    const kfcId = 48274
-    const limit = 1000
+  async update(): Promise<number> | never
+  async update(data?: {chainId?: number, limit?: number}): Promise<number> | never {
+    const KFC_ID = 48274
+    const chainId = data.chainId || KFC_ID
+    const limit = data.limit || 1000
     const url = 'https://api.delivery-club.ru/api1.2/reviews'
 
     const parseReviews = async (limit, offset, chainId): Promise<{total: number, reviews: Reviews[]}> | never => {
@@ -54,12 +56,12 @@ export class ReviewsService {
       }
     }
 
-    const { total, reviews } = await parseReviews(limit, 0, chainId || kfcId)
+    const { total, reviews } = await parseReviews(limit, 0, chainId)
 
     await this.reviewsModel.bulkCreate(reviews, { updateOnDuplicate: ['body', 'icon', 'answers'] })
 
     for (let i = 0; i < total / limit; i++) {
-      const resData = await parseReviews(limit, limit * i, chainId || kfcId)
+      const resData = await parseReviews(limit, limit * i, chainId)
       await this.reviewsModel.bulkCreate(resData.reviews, { updateOnDuplicate: ['body', 'icon', 'answers'] })
       // TODO: Сделать задержку
     }
