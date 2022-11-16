@@ -42,7 +42,7 @@ export class Reviews extends Model<Reviews> {
   @Column({ type: DataType.DATE })
   declare rated: Date
 
-  // @ApiProperty({ example: [], description: 'List of answers' })
+  @ApiProperty({ type: AnswerDto, description: 'List of answers' })
   @Column({ type: DataType.ARRAY(DataType.JSON) })
   declare answers?: AnswerDto
 

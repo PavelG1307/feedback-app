@@ -21,9 +21,7 @@ import { Reviews } from './reviews/models/review'
       autoLoadModels: true,
       logging: process.env.NODE_ENV === 'dev'
     }),
-    ReviewsModule,
-  ],
-  controllers: [],
-  providers: [],
+    ReviewsModule
+  ]
 })
 export class AppModule { }
