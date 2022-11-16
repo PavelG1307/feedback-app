@@ -35,7 +35,7 @@ export class ReviewsService {
     return { count: reviews.count, reviews: reviews.rows }
   }
 
-  async update(chainId): Promise<number> | never{
+  async update(chainId?): Promise<number> | never{
     const kfcId = 48274
     const limit = 1000
     const url = 'https://api.delivery-club.ru/api1.2/reviews'
