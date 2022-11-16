@@ -20,14 +20,14 @@ export class Reviews extends Model<Reviews> {
   })
   declare id?: number
 
-  @Column({ type: DataType.UUID })
-  declare uuid?: string
-
   @Column({ type: DataType.STRING })
   declare body: string
 
   @Column({ type: DataType.STRING })
   declare author: string
+
+  @Column({ type: DataType.STRING, unique: true })
+  declare orderHash: string
 
   @Column({ type: DataType.DATE })
   declare rated: Date

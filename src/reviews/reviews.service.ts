@@ -12,8 +12,11 @@ export class ReviewsService {
     private readonly httpService: HttpService,
   ) {}
 
-  get(filters: GetReviewsDto): Promise<Reviews[]> {
-    const reviews = this.reviewsModel.findAll()
+  get( filters: GetReviewsDto ): Promise<{ count: number, rows: Reviews[] }> {
+    const reviews = this.reviewsModel.findAndCountAll({
+      offset: Number(filters.offset) || 0,
+      limit: Number(filters.limit) || 20
+    })
     return reviews
   }
 
@@ -33,15 +36,19 @@ export class ReviewsService {
         .toPromise()
       return response.data
     }
-    const { total, reviews } = await parseReviews(50, 0)
-    console.log(reviews.lehgth)
-    const maxLimit = 100
-    for (let i; i < total / maxLimit; i++) {
-      console.log('Буду делать запрос')
-      // const reviewssAll = await parseReviews(maxLimit, maxLimit * i)
-      // await db.UpdateOrInsert(reviewssAll)
+    const maxLimit = 1000
+    const { total, reviews } = await parseReviews(maxLimit, 0)
+    if (!reviews) console.log('dont review')
+    await this.reviewsModel.bulkCreate(reviews, {
+        updateOnDuplicate: ['body'] 
+      })
+    for (let i = 0; i < total / maxLimit; i++) {
+      const resData = await parseReviews(maxLimit, maxLimit * i)
+      await this.reviewsModel.bulkCreate(resData.reviews,
+        {
+        updateOnDuplicate: ['body'] 
+      })
     }
-    console.log(reviews)
-    return { success: true, reviews }
+    return { success: true, total }
   }
 }

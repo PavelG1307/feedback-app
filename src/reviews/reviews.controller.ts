@@ -8,7 +8,7 @@ export class ReviewsController {
   constructor(private readonly ReviewsService: ReviewsService) {}
 
   @Get()
-  get(@Query() filters: GetReviewsDto): Promise<Reviews[]> {
+  get(@Query() filters: GetReviewsDto): Promise<{count: number, rows: Reviews[]}> {
     return this.ReviewsService.get(filters)
   }
 
