@@ -31,7 +31,7 @@ export class ReviewsService {
       offset: Number(filters.offset) || 0,
       limit: Number(filters.limit) || 20
     })
-    if (!reviews?.rows || reviews.rows.length === 0) throw new HttpException('Not found', HttpStatus.NOT_FOUND)
+    if (!reviews?.rows || !reviews.rows.length) throw new HttpException('Not found', HttpStatus.NOT_FOUND)
     return { count: reviews.count, reviews: reviews.rows }
   }
 
