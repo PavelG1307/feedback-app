@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { IsEmail, IsEnum } from "class-validator"
+import { IsEnum } from "class-validator"
 
 export class GetReviewsDto {
   @ApiProperty({ example: '20', default: 20, description: 'The maximum number of reviews in the response'})
