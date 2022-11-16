@@ -4,7 +4,8 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { getEnvFilePath } from './core/utils';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { FeedbackModule } from './feedback/feedback.module';
+import { ReviewsModule } from './reviews/reviews.module';
+import { Reviews } from './reviews/models/review';
 
 @Module({
   imports: [
@@ -18,10 +19,10 @@ import { FeedbackModule } from './feedback/feedback.module';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      models: [],
+      models: [Reviews],
       autoLoadModels: true,
     }),
-    FeedbackModule,
+    ReviewsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

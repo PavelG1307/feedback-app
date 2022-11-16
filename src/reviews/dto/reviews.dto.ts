@@ -1,7 +1,7 @@
 import { AnswerDto } from './answer.dto';
 import { ProductDto } from './product.dto';
 
-export class FeedbackDto {
+export class ReviewsDto {
   answers: AnswerDto[];
   author: string;
   body: string;
