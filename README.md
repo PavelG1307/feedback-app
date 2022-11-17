@@ -1,6 +1,6 @@
 # Intro
 
-This is a interactive comments section.
+Application for parsing reviews from the Delivery Club service.
 
 **Technology stack:** NestJS, TypeScript, PostgreSQL, Swagger, Docker
 
