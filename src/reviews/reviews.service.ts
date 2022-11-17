@@ -1,7 +1,6 @@
 import { HttpService } from '@nestjs/axios'
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { AxiosResponse } from 'axios'
 import { GetReviewsDto } from './dto/get-reviews.dto'
 import { ResponseGetReviewsDto } from './dto/res-get-update.dto'
 import { UpdateReviewsDto } from './dto/update-reviews.dto'
@@ -16,22 +15,10 @@ export class ReviewsService {
   ) { }
 
   async get(filters: GetReviewsDto): Promise<ResponseGetReviewsDto> {
-    if (filters?.order && filters?.order !== 'DESC' && filters?.order !== 'ASC') {
-      throw new HttpException('Bad request', HttpStatus.BAD_REQUEST)
-    }
-
-    const order: [] | [[string, 'DESC' | 'ASC']] = filters.orderBy ? [[filters.orderBy, filters?.order || 'DESC']] : []
-    delete filters.order
-    delete filters.orderBy
-    delete filters.limit
-    delete filters.offset
+    const { order, orderBy, limit, offset, ratedFrom, ratedTo, ...where} = filters
     const reviews = await this.reviewsModel.findAndCountAll({
-      order,
-      where: {
-        ...filters,
-        isDeleted: false
-      },
-      // TODO: Поправить фильтры
+      order: [[filters.orderBy || 'rated', filters?.order || 'DESC']],
+      where: { ...where, isDeleted: false},
       offset: filters.offset || 0,
       limit: filters.limit || 20
     })

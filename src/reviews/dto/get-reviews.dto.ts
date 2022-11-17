@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger"
 import { Transform } from "class-transformer"
-import { IsEnum, IsNumber, IsNumberString, IsOptional, IsString } from "class-validator"
+import { IsDate, IsEnum, IsNumber, IsNumberString, IsOptional, IsString } from "class-validator"
 
 export class GetReviewsDto {
   
@@ -23,6 +23,16 @@ export class GetReviewsDto {
   @IsOptional()
   @IsEnum(['DESC', 'ASC'])
   order?: 'DESC' | 'ASC'
+
+  @ApiProperty({ example: new Date(), required: false, description: 'Filtering by date (from)' })
+  @IsOptional()
+  @IsDate()
+  readonly ratedFrom?: Date
+  
+  @ApiProperty({ example: new Date(), required: false, description: 'Filtering by date (to)' })
+  @IsOptional()
+  @IsDate()
+  readonly ratedTo?: Date
 
   @ApiProperty({ example: 'Павел Горшков', description: 'Filtering by user', required: false })
   readonly author?: string
