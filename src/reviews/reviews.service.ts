@@ -29,6 +29,7 @@ export class ReviewsService {
   async update(updateConfig: UpdateReviewsDto): Promise<number> | never {
     const { chainId, limit } = updateConfig
     const url = 'https://api.delivery-club.ru/api1.2/reviews'
+
     const parseReviews = async (limit, offset, chainId): Promise<{ total: number, reviews: Reviews[] }> | never => {
       const params = { chainId, limit, offset }
       const method = 'get'
@@ -36,6 +37,7 @@ export class ReviewsService {
         const response = await this.httpService.get(url, { method, url, params }).toPromise()
         const { total, reviews } = response.data
         if (!(total && reviews)) throw new HttpException('Internal error', HttpStatus.INTERNAL_SERVER_ERROR)
+        reviews.forEach(review => Object.assign(review, { isDeleted: false }))
         return { total, reviews }
       } catch (e) {
         console.log(e)
@@ -44,13 +46,19 @@ export class ReviewsService {
     }
 
     const { total, reviews } = await parseReviews(limit, 0, chainId)
-    reviews.map(review => review.isDeleted = false)
-    await this.reviewsModel.update({ isDeleted: true }, { where: { isDeleted: false } })
-    await this.reviewsModel.bulkCreate(reviews, { updateOnDuplicate: ['body', 'icon', 'answers'] })
 
+    const setDeleteAll = async (): Promise<void> => {
+      await this.reviewsModel.update({ isDeleted: true }, { where: { isDeleted: false } })
+    }
+    const bulkUpsert = async (reviews: Reviews[]): Promise<void> => {
+      await this.reviewsModel.bulkCreate(reviews, { updateOnDuplicate: ['body', 'icon', 'answers'] })
+    }
+
+    await setDeleteAll()
+    await bulkUpsert(reviews)
     for (let i = 0; i < total / limit; i++) {
       const resData = await parseReviews(limit, limit * i, chainId)
-      await this.reviewsModel.bulkCreate(resData.reviews, { updateOnDuplicate: ['body', 'icon', 'answers'] })
+      await bulkUpsert(resData.reviews)
       // TODO: Сделать задержку
     }
     return total
