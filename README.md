@@ -22,12 +22,13 @@ Application for parsing reviews from the Delivery Club service.
 2. Create an ```.env.prod``` file in the root directory and add the following in
 ````javascript
 PORT=3000
-MONGO_INITDB_ROOT_USERNAME=<Your db username>
-MONGO_INITDB_ROOT_PASSWORD=<Your db password>
-MONGO_INITDB_DATABASE=<Your db name>
-MONGO_INITDB_HOST=<Your db host>
-NODE_ENV=prod
+DB_HOST=<Your db host>
+DB_PORT=<Your db port>
+DB_USER=<Your db username>
+DB_PASSWORD=<Your db password>
+DB_NAME=<Your db name>
 FRONT_URL=<Your url frontend>
+NODE_ENV=prod
 ````
 1. Running a docker container ```make prod``` in the root directory
 
