@@ -1,34 +1,42 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { IsEnum } from "class-validator"
+import { Transform } from "class-transformer"
+import { IsEnum, IsNumber, IsNumberString, IsOptional, IsString } from "class-validator"
 
 export class GetReviewsDto {
-  @ApiProperty({ example: '20', default: 20, description: 'The maximum number of reviews in the response'})
-  readonly limit?: string | number
+  @ApiProperty({ example: 20, default: 20, description: 'The maximum number of reviews in the response'})
+  @IsOptional()
+  @Transform(() => Number)
+  limit?: number
 
-  @ApiProperty({ example: '0', default: 0, description: 'Offset relative to the first review' })
-  readonly offset?: string | number
+  @ApiProperty({ example: 0, default: 0, required: false, description: 'Offset relative to the first review' })
+  @Transform(() => Number)
+  @IsOptional()
+  offset?: number
 
-  @ApiProperty({ example: '2020-11-08 16:04:28.000000 +00:00', description: 'Filtering by date from' })
-  readonly dateFrom?: string
+  @ApiProperty({ example: new Date(2020, 12, 10, 15, 24, 0), required: false, description: 'Filtering by date from' })
+  dateFrom?: string
 
-  @ApiProperty({ example: '2021-11-08 16:04:28.000000 +00:00', description: 'Filtering by date to' })
-  readonly dateTo?: string
+  @ApiProperty({ example: new Date(), required: false, description: 'Filtering by date to' })
+  dateTo?: string
 
-  @ApiProperty({ example: 'Павел Горшков', description: 'Filtering by user' })
-  readonly byAuthor?: string
+  @ApiProperty({ example: 'Павел Горшков', description: 'Filtering by user', required: false })
+  readonly author?: string
 
-  @ApiProperty({ example: '😊', enum: ['😊', '😖'], description: 'Filtering by the icon showing the mood of the review' })
-  @IsEnum(['😊', '😖', undefined])
-  readonly byIcon?: '😊' | '😖'
+  @ApiProperty({ example: '😊', enum: ['😊', '😖'], required: false, description: 'Filtering by the icon showing the mood of the review' })
+  @IsOptional()
+  @IsEnum(['😊', '😖'])
+  readonly icon?: '😊' | '😖'
 
-  @ApiProperty({ example: 'c6aefd68e9543184433eb2250eb8efc5a31e8a83', description: 'Filtering by order hash' })
-  readonly byOrderHash?: string
+  @ApiProperty({ example: 'c6aefd68e9543184433eb2250eb8efc5a31e8a83', required: false, description: 'Filtering by order hash' })
+  readonly orderHash?: string
 
-  @ApiProperty({ example: 'rated', description: 'The field by which sorting is performed' })
-  @IsEnum(['rated', 'icon', undefined])
-  readonly orderBy?: 'rated' | 'icon'
+  @ApiProperty({ example: 'rated', default: 'rated', required: false, description: 'The field by which sorting is performed' })
+  @IsOptional()
+  @IsEnum(['rated', 'icon'])
+  orderBy?: 'rated' | 'icon'
 
-  @ApiProperty({ example: 'DESC', default: 'DESC', enum: ['DESC', 'ASC'], description: 'Sorting direction' })
-  @IsEnum(['DESC', 'ASC', undefined])
-  readonly order?: 'DESC' | 'ASC'
+  @ApiProperty({ example: 'DESC', default: 'DESC', enum: ['DESC', 'ASC'], required: false, description: 'Sorting direction' })
+  @IsOptional()
+  @IsEnum(['DESC', 'ASC'])
+  order?: 'DESC' | 'ASC'
 }

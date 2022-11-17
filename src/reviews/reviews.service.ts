@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { AxiosResponse } from 'axios'
 import { GetReviewsDto } from './dto/get-reviews.dto'
 import { ResponseGetReviewsDto } from './dto/res-get-update.dto'
+import { UpdateReviewsDto } from './dto/update-reviews.dto'
 import { Reviews } from './models/review'
 
 @Injectable()
@@ -20,28 +21,26 @@ export class ReviewsService {
     }
 
     const order: [] | [[string, 'DESC' | 'ASC']] = filters.orderBy ? [[filters.orderBy, filters?.order || 'DESC']] : []
+    delete filters.order
+    delete filters.dateFrom
+    delete filters.dateTo
+    delete filters.orderBy
     const reviews = await this.reviewsModel.findAndCountAll({
       order,
       where: {
-        author: filters?.byAuthor,
-        icon: filters?.byIcon,
-        orderHash: filters?.byOrderHash
+        ...filters
       },
       // TODO: Поправить фильтры
-      offset: Number(filters.offset) || 0,
-      limit: Number(filters.limit) || 20
+      offset: filters.offset || 0,
+      limit: filters.limit || 20
     })
     if (!reviews?.rows || !reviews.rows.length) throw new HttpException('Not found', HttpStatus.NOT_FOUND)
     return { count: reviews.count, reviews: reviews.rows }
   }
 
-  async update(): Promise<number> | never
-  async update(data?: {chainId?: number, limit?: number}): Promise<number> | never {
-    const KFC_ID = 48274
-    const chainId = data.chainId || KFC_ID
-    const limit = data.limit || 1000
+  async update(updateConfig: UpdateReviewsDto): Promise<number> | never {
+    const { chainId, limit } = updateConfig
     const url = 'https://api.delivery-club.ru/api1.2/reviews'
-
     const parseReviews = async (limit, offset, chainId): Promise<{total: number, reviews: Reviews[]}> | never => {
       const params = { chainId, limit, offset }
       const method = 'get'

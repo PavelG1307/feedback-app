@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Put, Query } from '@nestjs/common'
+import { Body, Controller, Get, Post, Put, Query } from '@nestjs/common'
 import { ApiBadRequestResponse, ApiCreatedResponse, ApiNotFoundResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { GetReviewsDto } from './dto/get-reviews.dto'
 import { ResponseGetReviewsDto } from './dto/res-get-update.dto'
 import { ResponseUpdateReviewsDto } from './dto/res-update-review.dto'
+import { UpdateReviewsDto } from './dto/update-reviews.dto'
 import { ReviewsService } from './reviews.service'
 
 @ApiTags('Reviews')
@@ -32,8 +33,14 @@ export class ReviewsController {
     description: 'Internal Server Error',
   })
   @Put()
-  async update(): Promise<ResponseUpdateReviewsDto> {
-    const total = await this.ReviewsService.update()
+    async update(@Body() body: UpdateReviewsDto): Promise<ResponseUpdateReviewsDto> {
+    const KFC_ID = 48274
+    const DEFAULT_LIMIT = 1000
+    const updateConfig = {
+      chainId: body?.chainId ?? KFC_ID,
+      limit: body?.limit ?? DEFAULT_LIMIT
+    }
+    const total = await this.ReviewsService.update(updateConfig)
     return { success: !!total, total: total ?? null }
   }
 }
