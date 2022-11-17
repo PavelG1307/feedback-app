@@ -46,17 +46,14 @@ export class Reviews extends Model<Reviews> {
   @Column({ type: DataType.ARRAY(DataType.JSON) })
   declare answers?: AnswerDto
 
-  @ApiProperty({ example: '2022-11-16 18:30:17.290000 +00:00', description: 'Date of initial parsing' })
-  @Column({
-    type: DataType.DATE,
-  })
+  @Column({ type: DataType.BOOLEAN, defaultValue: false })
+  declare isDeleted?: boolean
+
+  @Column({ type: DataType.DATE })
   @CreatedAt
   declare createdAt?: Date
 
-  @ApiProperty({ example: '2022-11-16 18:30:17.290000 +00:00', description: 'Review update date' })
-  @Column({
-    type: DataType.DATE,
-  })
+  @Column({ type: DataType.DATE })
   @UpdatedAt
   declare updatedAt?: Date
 }

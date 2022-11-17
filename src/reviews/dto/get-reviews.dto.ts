@@ -3,6 +3,7 @@ import { Transform } from "class-transformer"
 import { IsEnum, IsNumber, IsNumberString, IsOptional, IsString } from "class-validator"
 
 export class GetReviewsDto {
+  
   @ApiProperty({ example: 20, default: 20, description: 'The maximum number of reviews in the response'})
   @IsOptional()
   @Transform(() => Number)
@@ -13,11 +14,15 @@ export class GetReviewsDto {
   @IsOptional()
   offset?: number
 
-  @ApiProperty({ example: new Date(2020, 12, 10, 15, 24, 0), required: false, description: 'Filtering by date from' })
-  dateFrom?: string
+  @ApiProperty({ example: 'rated', default: 'rated', required: false, description: 'The field by which sorting is performed' })
+  @IsOptional()
+  @IsEnum(['rated', 'icon'])
+  orderBy?: 'rated' | 'icon'
 
-  @ApiProperty({ example: new Date(), required: false, description: 'Filtering by date to' })
-  dateTo?: string
+  @ApiProperty({ example: 'DESC', default: 'DESC', enum: ['DESC', 'ASC'], required: false, description: 'Sorting direction' })
+  @IsOptional()
+  @IsEnum(['DESC', 'ASC'])
+  order?: 'DESC' | 'ASC'
 
   @ApiProperty({ example: 'Павел Горшков', description: 'Filtering by user', required: false })
   readonly author?: string
@@ -29,14 +34,4 @@ export class GetReviewsDto {
 
   @ApiProperty({ example: 'c6aefd68e9543184433eb2250eb8efc5a31e8a83', required: false, description: 'Filtering by order hash' })
   readonly orderHash?: string
-
-  @ApiProperty({ example: 'rated', default: 'rated', required: false, description: 'The field by which sorting is performed' })
-  @IsOptional()
-  @IsEnum(['rated', 'icon'])
-  orderBy?: 'rated' | 'icon'
-
-  @ApiProperty({ example: 'DESC', default: 'DESC', enum: ['DESC', 'ASC'], required: false, description: 'Sorting direction' })
-  @IsOptional()
-  @IsEnum(['DESC', 'ASC'])
-  order?: 'DESC' | 'ASC'
 }

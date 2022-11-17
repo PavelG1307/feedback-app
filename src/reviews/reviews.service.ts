@@ -22,13 +22,14 @@ export class ReviewsService {
 
     const order: [] | [[string, 'DESC' | 'ASC']] = filters.orderBy ? [[filters.orderBy, filters?.order || 'DESC']] : []
     delete filters.order
-    delete filters.dateFrom
-    delete filters.dateTo
     delete filters.orderBy
+    delete filters.limit
+    delete filters.offset
     const reviews = await this.reviewsModel.findAndCountAll({
       order,
       where: {
-        ...filters
+        ...filters,
+        isDeleted: false
       },
       // TODO: Поправить фильтры
       offset: filters.offset || 0,
@@ -56,7 +57,8 @@ export class ReviewsService {
     }
 
     const { total, reviews } = await parseReviews(limit, 0, chainId)
-
+    reviews.map(review => review.isDeleted = false)
+    await this.reviewsModel.update({ isDeleted: true }, { where: { isDeleted: false }})
     await this.reviewsModel.bulkCreate(reviews, { updateOnDuplicate: ['body', 'icon', 'answers'] })
 
     for (let i = 0; i < total / limit; i++) {
