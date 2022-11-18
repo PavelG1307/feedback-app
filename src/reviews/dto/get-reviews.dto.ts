@@ -1,10 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger"
 import { Transform } from "class-transformer"
-import { IsDate, IsEnum, IsNumber, IsNumberString, IsOptional, IsString } from "class-validator"
+import { IsEnum, IsOptional } from "class-validator"
 
 export class GetReviewsDto {
   
-  @ApiProperty({ example: 20, default: 20, description: 'The maximum number of reviews in the response'})
+  @ApiProperty({ example: 20, default: 20, required: false, description: 'The maximum number of reviews in the response'})
   @IsOptional()
   @Transform(() => Number)
   limit?: number
@@ -24,14 +24,14 @@ export class GetReviewsDto {
   @IsEnum(['DESC', 'ASC'])
   order?: 'DESC' | 'ASC'
 
-  @ApiProperty({ example: new Date(), required: false, description: 'Filtering by date (from)' })
+  @ApiProperty({ example: '2022-11-17T00:00:00Z', required: false, description: 'Filtering by date (from)' })
   @IsOptional()
-  @IsDate()
+  @Transform(() => Date)
   readonly ratedFrom?: Date
   
-  @ApiProperty({ example: new Date(), required: false, description: 'Filtering by date (to)' })
+  @ApiProperty({ example: '2022-11-18T16:08:46Z', required: false, description: 'Filtering by date (to)' })
   @IsOptional()
-  @IsDate()
+  @Transform(() => Date)
   readonly ratedTo?: Date
 
   @ApiProperty({ example: 'Павел Горшков', description: 'Filtering by user', required: false })

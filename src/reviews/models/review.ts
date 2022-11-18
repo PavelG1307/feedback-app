@@ -42,9 +42,9 @@ export class Reviews extends Model<Reviews> {
   @Column({ type: DataType.DATE })
   declare rated: Date
 
-  @ApiProperty({ type: AnswerDto, description: 'List of answers' })
+  @ApiProperty({ type: [AnswerDto], description: 'List of answers' })
   @Column({ type: DataType.ARRAY(DataType.JSON) })
-  declare answers?: AnswerDto
+  declare answers?: AnswerDto[]
 
   @Column({ type: DataType.BOOLEAN, defaultValue: false })
   declare isDeleted?: boolean

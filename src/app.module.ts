@@ -19,7 +19,7 @@ import { Reviews } from './reviews/models/review'
       database: process.env.DB_NAME,
       models: [Reviews],
       autoLoadModels: true,
-      logging: process.env.NODE_ENV === 'dev'
+      logging: process.env.NODE_ENV === 'dev' ? console.log : false
     }),
     ReviewsModule
   ]
