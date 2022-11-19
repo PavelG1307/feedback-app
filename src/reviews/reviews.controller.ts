@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Put, Query } from '@nestjs/common'
+import { Body, Controller, Get, HttpException, HttpStatus, Put, Query } from '@nestjs/common'
 import { ApiBadRequestResponse, ApiBody, ApiNotFoundResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { DEFAULT_CHAIN_ID, DEFAULT_LIMIT } from 'src/core/constants'
 import { GetReviewsDto, ResponseGetReviewsDto } from './dto/get-reviews.dto'
@@ -8,9 +8,9 @@ import { ReviewsService } from './reviews.service'
 @ApiTags('Reviews')
 @Controller('reviews')
 export class ReviewsController {
-  constructor(private readonly ReviewsService: ReviewsService) {}
+  constructor(private readonly ReviewsService: ReviewsService) { }
 
-  @ApiOperation({summary: 'Get reviews'})
+  @ApiOperation({ summary: 'Get reviews' })
   @ApiResponse({ status: 200, type: ResponseGetReviewsDto })
   @ApiBadRequestResponse({ description: 'Bad request' })
   @ApiNotFoundResponse({ description: 'Not Found' })
@@ -19,13 +19,18 @@ export class ReviewsController {
     description: 'Internal Server Error',
   })
   @Get()
-  async get(@Query() filters: GetReviewsDto): Promise<ResponseGetReviewsDto> {
-    const data = await this.ReviewsService.get(filters)
-    return data
+  async get(@Query() filters: GetReviewsDto): Promise<ResponseGetReviewsDto> | never {
+    try {
+      const data = await this.ReviewsService.get(filters)
+      return data
+    } catch (e) {
+      console.log(e)
+      throw new HttpException('Internal error', HttpStatus.INTERNAL_SERVER_ERROR)
+    }
   }
 
   @ApiBody({ type: [UpdateReviewsDto] })
-  @ApiOperation({summary: 'Start parsing reviews'})
+  @ApiOperation({ summary: 'Start parsing reviews' })
   @ApiResponse({ status: 200, type: ResponseUpdateReviewsDto })
   @ApiBadRequestResponse({ description: 'Bad request' })
   @ApiResponse({
@@ -33,12 +38,17 @@ export class ReviewsController {
     description: 'Internal Server Error',
   })
   @Put()
-    async update(@Body() body: UpdateReviewsDto): Promise<ResponseUpdateReviewsDto> {
-    const updateConfig = {
-      chainId: body?.chainId ?? DEFAULT_CHAIN_ID,
-      limit: body?.limit ?? DEFAULT_LIMIT
+  async update(@Body() body: UpdateReviewsDto): Promise<ResponseUpdateReviewsDto> | never {
+    try {
+      const updateConfig = {
+        chainId: body?.chainId ?? DEFAULT_CHAIN_ID,
+        limit: body?.limit ?? DEFAULT_LIMIT
+      }
+      const total = await this.ReviewsService.update(updateConfig)
+      return { success: !!total, total: total ?? null }
+    } catch (e) {
+      console.log(e)
+      throw new HttpException('Internal error', HttpStatus.INTERNAL_SERVER_ERROR)
     }
-    const total = await this.ReviewsService.update(updateConfig)
-    return { success: !!total, total: total ?? null }
   }
 }
