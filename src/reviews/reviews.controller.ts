@@ -1,9 +1,7 @@
 import { Body, Controller, Get, Post, Put, Query } from '@nestjs/common'
-import { ApiBadRequestResponse, ApiCreatedResponse, ApiNotFoundResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
-import { GetReviewsDto } from './dto/get-reviews.dto'
-import { ResponseGetReviewsDto } from './dto/res-get-update.dto'
-import { ResponseUpdateReviewsDto } from './dto/res-update-review.dto'
-import { UpdateReviewsDto } from './dto/update-reviews.dto'
+import { ApiBadRequestResponse, ApiBody, ApiCreatedResponse, ApiNotFoundResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { GetReviewsDto, ResponseGetReviewsDto } from './dto/get-reviews.dto'
+import { ResponseUpdateReviewsDto, UpdateReviewsDto } from './dto/update-reviews.dto'
 import { ReviewsService } from './reviews.service'
 
 @ApiTags('Reviews')
@@ -25,6 +23,7 @@ export class ReviewsController {
     return data
   }
 
+  @ApiBody({ type: [UpdateReviewsDto] })
   @ApiOperation({summary: 'Start parsing reviews'})
   @ApiResponse({ status: 200, type: ResponseUpdateReviewsDto })
   @ApiBadRequestResponse({ description: 'Bad request' })
@@ -34,10 +33,10 @@ export class ReviewsController {
   })
   @Put()
     async update(@Body() body: UpdateReviewsDto): Promise<ResponseUpdateReviewsDto> {
-    const KFC_ID = 48274
+    const DEFAUL_CHAIN_ID = Number(process.env.DEFAUL_CHAIN_ID) || 48274
     const DEFAULT_LIMIT = 1000
     const updateConfig = {
-      chainId: body?.chainId ?? KFC_ID,
+      chainId: body?.chainId ?? DEFAUL_CHAIN_ID,
       limit: body?.limit ?? DEFAULT_LIMIT
     }
     const total = await this.ReviewsService.update(updateConfig)

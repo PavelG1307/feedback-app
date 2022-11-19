@@ -3,8 +3,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { delay } from 'rxjs'
 import { Op } from "sequelize"
-import { GetReviewsDto } from './dto/get-reviews.dto'
-import { ResponseGetReviewsDto } from './dto/res-get-update.dto'
+import { GetReviewsDto, ResponseGetReviewsDto } from './dto/get-reviews.dto'
 import { UpdateReviewsDto } from './dto/update-reviews.dto'
 import { Reviews } from './models/review'
 

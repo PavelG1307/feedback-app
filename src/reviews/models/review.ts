@@ -7,12 +7,23 @@ import {
   UpdatedAt,
   CreatedAt,
 } from 'sequelize-typescript'
-import { AnswerDto } from '../dto/answer.dto'
 
 @Table({
   tableName: 'reviews',
   timestamps: true,
 })
+
+export class CompanyAnswerDto {
+  @ApiProperty({ example: 'Спасибо за отзыв', description: 'Date and time of publication of the review' })
+  answer: string
+
+  @ApiProperty({ example: '2021-11-08 16:04:28.000000 +00:00', description: 'Date and time of publication of the answer' })
+  createdAt: Date
+
+  @ApiProperty({ example: '4bbb9f7a-22d4-418c-8505-7eb2b0e4da7f', description: 'Public uuid of the answer' })
+  publicUuid: string
+}
+
 export class Reviews extends Model<Reviews> {
   @ApiProperty({ example: '1', description: 'Unique review ID' })
   @Column({
@@ -42,9 +53,9 @@ export class Reviews extends Model<Reviews> {
   @Column({ type: DataType.DATE })
   declare rated: Date
 
-  @ApiProperty({ type: [AnswerDto], description: 'List of answers' })
+  @ApiProperty({ type: [CompanyAnswerDto], description: 'List of answers' })
   @Column({ type: DataType.ARRAY(DataType.JSON) })
-  declare answers?: AnswerDto[]
+  declare answers?: CompanyAnswerDto[]
 
   @Column({ type: DataType.BOOLEAN, defaultValue: false })
   declare isDeleted?: boolean

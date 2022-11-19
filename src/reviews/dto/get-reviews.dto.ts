@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger"
 import { Transform } from "class-transformer"
 import { IsEnum, IsOptional } from "class-validator"
+import { Reviews } from "../models/review"
 
 export class GetReviewsDto {
   
@@ -44,4 +45,12 @@ export class GetReviewsDto {
 
   @ApiProperty({ example: 'c6aefd68e9543184433eb2250eb8efc5a31e8a83', required: false, description: 'Filtering by order hash' })
   readonly orderHash?: string
+}
+
+export class ResponseGetReviewsDto {
+  @ApiProperty({ example: '34556', description: 'Total number of reviews' })
+  count: number
+
+  @ApiProperty({ type: [Reviews], description: 'List of reviews' })
+  reviews: Reviews[]
 }
