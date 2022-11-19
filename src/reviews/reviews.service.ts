@@ -3,7 +3,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { delay } from 'rxjs'
 import { Op } from "sequelize"
-import { DEFAULT_LAZY_LOADING, DEFAULT_SORTING, DELIVERY_CLUB_URL } from 'src/core/constants'
+import { DEFAULT_LAZY_LOADING, DEFAULT_SORTING, DELIVERY_CLUB_URL, PARSING_TIMEOUT } from 'src/core/constants'
 import { GetReviewsDto, ResponseGetReviewsDto } from './dto/get-reviews.dto'
 import { UpdateReviewsDto } from './dto/update-reviews.dto'
 import { IParsedData, IParserConfig } from './interfaces/parsed-data'
@@ -72,7 +72,7 @@ export class ReviewsService {
       const resData = await parseReviews({ limit, offset, chainId })
       await bulkUpsert(resData.reviews)
       offset += limit
-      await delay(2000);
+      await delay(PARSING_TIMEOUT);
     }
     return total
   }
