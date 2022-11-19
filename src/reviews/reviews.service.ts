@@ -3,7 +3,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { delay } from 'rxjs'
 import { Op } from "sequelize"
-import { DEFAULT_SORTING, DELIVERY_CLUB_URL } from 'src/core/constants'
+import { DEFAULT_LAZY_LOADING, DEFAULT_SORTING, DELIVERY_CLUB_URL } from 'src/core/constants'
 import { GetReviewsDto, ResponseGetReviewsDto } from './dto/get-reviews.dto'
 import { UpdateReviewsDto } from './dto/update-reviews.dto'
 import { IParsedData, IParserConfig } from './interfaces/parsed-data'
@@ -28,10 +28,10 @@ export class ReviewsService {
     }
 
     const reviews = await this.reviewsModel.findAndCountAll({
-      order: [[ orderBy || DEFAULT_SORTING.orderBy, order || DEFAULT_SORTING.orderBy ]],
+      order: [[ orderBy || DEFAULT_SORTING.orderBy, order || DEFAULT_SORTING.order ]],
       where: { ...where, isDeleted: false },
-      offset: offset || 0,
-      limit: limit || 20
+      offset: offset || DEFAULT_LAZY_LOADING.offset,
+      limit: limit || DEFAULT_LAZY_LOADING.limit
     })
     if (!(reviews?.rows && reviews.rows.length)) throw new HttpException('Not found', HttpStatus.NOT_FOUND)
     return { count: reviews.count, reviews: reviews.rows }
@@ -59,12 +59,12 @@ export class ReviewsService {
       await this.reviewsModel.update({ isDeleted: true }, { where: { isDeleted: false } })
     }
 
-    let offset = 0
-
-    const { total, reviews } = await parseReviews({ limit, offset, chainId })
     const bulkUpsert = async (reviews: Review[]): Promise<void> => {
       await this.reviewsModel.bulkCreate(reviews, { updateOnDuplicate: ['body', 'icon', 'answers', 'isDeleted'] })
     }
+
+    let offset = 0
+    const { total, reviews } = await parseReviews({ limit, offset, chainId })
 
     await setDeleteAll()
     await bulkUpsert(reviews)
