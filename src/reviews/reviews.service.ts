@@ -3,8 +3,10 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { delay } from 'rxjs'
 import { Op } from "sequelize"
+import { DEFAULT_SORTING, DELIVERY_CLUB_URL } from 'src/core/constants'
 import { GetReviewsDto, ResponseGetReviewsDto } from './dto/get-reviews.dto'
 import { UpdateReviewsDto } from './dto/update-reviews.dto'
+import { IParsedData, IParserConfig } from './interfaces/parsed-data'
 import { Review } from './models/review'
 
 @Injectable()
@@ -17,12 +19,17 @@ export class ReviewsService {
 
   async get(filters: GetReviewsDto): Promise<ResponseGetReviewsDto> {
     const { order, orderBy, limit, offset, ratedFrom, ratedTo, ...where } = filters
-    const rated = {}
-    Object.assign(rated, { [Op.between]: [ratedFrom || 0, ratedTo || new Date()] })
-    
+    if (ratedFrom && ratedTo) {
+      Object.assign(where, { rated: { [Op.between]: [ratedFrom, ratedTo] } })
+    } else if (ratedFrom) {
+      Object.assign(where, { rated: { [Op.gte]: ratedFrom } })
+    } else if (ratedTo) {
+      Object.assign(where, { rated: { [Op.lte]: ratedTo } })
+    }
+
     const reviews = await this.reviewsModel.findAndCountAll({
-      order: [[orderBy || 'rated', order || 'DESC']],
-      where: { ...where, rated, isDeleted: false },
+      order: [[ orderBy || DEFAULT_SORTING.orderBy, order || DEFAULT_SORTING.orderBy ]],
+      where: { ...where, isDeleted: false },
       offset: offset || 0,
       limit: limit || 20
     })
@@ -32,16 +39,15 @@ export class ReviewsService {
 
   async update(updateConfig: UpdateReviewsDto): Promise<number> | never {
     const { chainId, limit } = updateConfig
-    const url = 'https://api.delivery-club.ru/api1.2/reviews'
-
-    const parseReviews = async (limit: number, offset: number, chainId: number): Promise<{ total: number, reviews: Review[] }> | never => {
-      const params = { chainId, limit, offset }
+    const parseReviews = async (parserConfig: IParserConfig): Promise<IParsedData> | never => {
       const method = 'get'
       try {
-        const response = await this.httpService.get(url, { method, url, params }).toPromise()
+        const response = await this.httpService.get(DELIVERY_CLUB_URL, { method, params: parserConfig }).toPromise()
         const { total, reviews } = response.data
         if (!(total && reviews)) throw new HttpException('Internal error', HttpStatus.INTERNAL_SERVER_ERROR)
-        reviews.forEach(review => Object.assign(review, { isDeleted: false }))
+        reviews.forEach((review: Review) => {
+          return Object.assign(review, { isDeleted: false })
+        })
         return { total, reviews }
       } catch (e) {
         console.log(e)
@@ -49,13 +55,13 @@ export class ReviewsService {
       }
     }
 
-    let offset = 0
-
     const setDeleteAll = async (): Promise<void> => {
       await this.reviewsModel.update({ isDeleted: true }, { where: { isDeleted: false } })
     }
-  
-    const { total, reviews } = await parseReviews(limit, offset, chainId)
+
+    let offset = 0
+
+    const { total, reviews } = await parseReviews({ limit, offset, chainId })
     const bulkUpsert = async (reviews: Review[]): Promise<void> => {
       await this.reviewsModel.bulkCreate(reviews, { updateOnDuplicate: ['body', 'icon', 'answers', 'isDeleted'] })
     }
@@ -63,7 +69,7 @@ export class ReviewsService {
     await setDeleteAll()
     await bulkUpsert(reviews)
     for (let i = 0; i < total / limit; i++) {
-      const resData = await parseReviews(limit, offset, chainId)
+      const resData = await parseReviews({ limit, offset, chainId })
       await bulkUpsert(resData.reviews)
       offset += limit
       await delay(2000);

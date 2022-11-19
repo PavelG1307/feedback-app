@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Put, Query } from '@nestjs/common'
 import { ApiBadRequestResponse, ApiBody, ApiNotFoundResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { DEFAULT_CHAIN_ID, DEFAULT_LIMIT } from 'src/core/constants'
 import { GetReviewsDto, ResponseGetReviewsDto } from './dto/get-reviews.dto'
 import { ResponseUpdateReviewsDto, UpdateReviewsDto } from './dto/update-reviews.dto'
 import { ReviewsService } from './reviews.service'
@@ -33,10 +34,8 @@ export class ReviewsController {
   })
   @Put()
     async update(@Body() body: UpdateReviewsDto): Promise<ResponseUpdateReviewsDto> {
-    const DEFAUL_CHAIN_ID = Number(process.env.DEFAUL_CHAIN_ID) || 48274
-    const DEFAULT_LIMIT = 1000
     const updateConfig = {
-      chainId: body?.chainId ?? DEFAUL_CHAIN_ID,
+      chainId: body?.chainId ?? DEFAULT_CHAIN_ID,
       limit: body?.limit ?? DEFAULT_LIMIT
     }
     const total = await this.ReviewsService.update(updateConfig)

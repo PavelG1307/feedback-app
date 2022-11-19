@@ -29,11 +29,9 @@ DB_USER=<Your db username>
 DB_PASSWORD=<Your db password>
 DB_NAME=<Your db name>
 FRONT_URL=<Your url frontend>
-DEFAUL_CHAIN_ID=<ID company>
 
 NODE_ENV=prod
 ````
-> Example: KFC chain id – 48274
 
 1. Running a docker container ```make prod``` in the root directory
 
