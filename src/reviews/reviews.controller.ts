@@ -25,6 +25,7 @@ export class ReviewsController {
       return data
     } catch (e) {
       console.log(e)
+      if (e instanceof HttpException) throw e
       throw new HttpException('Internal error', HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
@@ -48,6 +49,7 @@ export class ReviewsController {
       return { success: !!total, total: total ?? null }
     } catch (e) {
       console.log(e)
+      if (e instanceof HttpException) throw e
       throw new HttpException('Internal error', HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
