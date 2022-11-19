@@ -33,10 +33,6 @@ FRONT_URL=<Your url frontend>
 NODE_ENV=prod
 ````
 
-1. Running a docker container ```make prod``` in the root directory
-
-> In order to stop a docker contaienr in the root directory to run an ```make stop``` command
-
 ## Test
 
 ```bash
