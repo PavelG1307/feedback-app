@@ -22,6 +22,7 @@ Application for parsing reviews from the Delivery Club service.
 2. Create an ```.env.prod``` file in the root directory and add the following in
 ````javascript
 PORT=3000
+API_PREFIX=/api/v1
 DB_HOST=<Your db host>
 DB_PORT=<Your db port>
 DB_USER=<Your db username>
@@ -32,6 +33,8 @@ DEFAUL_CHAIN_ID=<ID company>
 
 NODE_ENV=prod
 ````
+> Example: KFC chain id – 48274
+
 1. Running a docker container ```make prod``` in the root directory
 
 > In order to stop a docker contaienr in the root directory to run an ```make stop``` command
