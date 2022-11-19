@@ -5,13 +5,13 @@ import { delay } from 'rxjs'
 import { Op } from "sequelize"
 import { GetReviewsDto, ResponseGetReviewsDto } from './dto/get-reviews.dto'
 import { UpdateReviewsDto } from './dto/update-reviews.dto'
-import { Reviews } from './models/review'
+import { Review } from './models/review'
 
 @Injectable()
 export class ReviewsService {
   constructor(
-    @InjectModel(Reviews)
-    private readonly reviewsModel: typeof Reviews,
+    @InjectModel(Review)
+    private readonly reviewsModel: typeof Review,
     private readonly httpService: HttpService,
   ) { }
 
@@ -34,7 +34,7 @@ export class ReviewsService {
     const { chainId, limit } = updateConfig
     const url = 'https://api.delivery-club.ru/api1.2/reviews'
 
-    const parseReviews = async (limit: number, offset: number, chainId: number): Promise<{ total: number, reviews: Reviews[] }> | never => {
+    const parseReviews = async (limit: number, offset: number, chainId: number): Promise<{ total: number, reviews: Review[] }> | never => {
       const params = { chainId, limit, offset }
       const method = 'get'
       try {
@@ -56,7 +56,7 @@ export class ReviewsService {
     }
   
     const { total, reviews } = await parseReviews(limit, offset, chainId)
-    const bulkUpsert = async (reviews: Reviews[]): Promise<void> => {
+    const bulkUpsert = async (reviews: Review[]): Promise<void> => {
       await this.reviewsModel.bulkCreate(reviews, { updateOnDuplicate: ['body', 'icon', 'answers', 'isDeleted'] })
     }
 
@@ -66,7 +66,7 @@ export class ReviewsService {
       const resData = await parseReviews(limit, offset, chainId)
       await bulkUpsert(resData.reviews)
       offset += limit
-      await delay(1000);
+      await delay(2000);
     }
     return total
   }

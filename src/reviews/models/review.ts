@@ -9,11 +9,11 @@ import {
 } from 'sequelize-typescript'
 
 @Table({
-  tableName: 'reviews',
+  tableName: 'Reviews',
   timestamps: true,
 })
 
-export class CompanyAnswerDto {
+export class CompanyAnswer {
   @ApiProperty({ example: 'Спасибо за отзыв', description: 'Date and time of publication of the review' })
   answer: string
 
@@ -24,7 +24,7 @@ export class CompanyAnswerDto {
   publicUuid: string
 }
 
-export class Reviews extends Model<Reviews> {
+export class Review extends Model<Review> {
   @ApiProperty({ example: '1', description: 'Unique review ID' })
   @Column({
     type: DataType.INTEGER,
@@ -53,9 +53,9 @@ export class Reviews extends Model<Reviews> {
   @Column({ type: DataType.DATE })
   declare rated: Date
 
-  @ApiProperty({ type: [CompanyAnswerDto], description: 'List of answers' })
+  @ApiProperty({ type: [CompanyAnswer], description: 'List of answers' })
   @Column({ type: DataType.ARRAY(DataType.JSON) })
-  declare answers?: CompanyAnswerDto[]
+  declare answers?: CompanyAnswer[]
 
   @Column({ type: DataType.BOOLEAN, defaultValue: false })
   declare isDeleted?: boolean

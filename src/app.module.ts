@@ -3,12 +3,12 @@ import { ConfigModule } from '@nestjs/config'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { getEnvFilePath } from './core/utils'
 import { ReviewsModule } from './reviews/reviews.module'
-import { Reviews } from './reviews/models/review'
+import { Review } from './reviews/models/review'
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: getEnvFilePath(),
+      envFilePath: getEnvFilePath()
     }),
     SequelizeModule.forRoot({
       dialect: 'postgres',
@@ -17,11 +17,11 @@ import { Reviews } from './reviews/models/review'
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      models: [Reviews],
+      models: [Review],
       autoLoadModels: true,
       logging: process.env.NODE_ENV === 'dev' ? console.log : false
     }),
     ReviewsModule
   ]
 })
-export class AppModule { }
+export class AppModule {}

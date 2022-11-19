@@ -19,11 +19,12 @@ async function bootstrap() {
 
     initSwagger(app)
 
-    await app.listen(process.env.PORT)
-  } catch (error: any) {
+    await app.listen(process.env.PORT || 3000)
+  } catch (error) {
     // eslint-disable-next-line no-console
     console.error(`Error occured: ${error.message}`)
     process.exit(EXIT_CODES.FAILED)
   }
 }
+
 bootstrap()
