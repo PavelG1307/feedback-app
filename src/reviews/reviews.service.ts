@@ -1,6 +1,7 @@
 import { HttpService } from '@nestjs/axios'
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { query } from 'express'
 import { delay } from 'rxjs'
 import { Op } from "sequelize"
 import { DEFAULT_LAZY_LOADING, DEFAULT_SORTING, DELIVERY_CLUB_URL, PARSING_TIMEOUT } from 'src/core/constants'

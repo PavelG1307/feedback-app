@@ -10,6 +10,4 @@ COPY . .
 
 EXPOSE 3000
 
-COPY ./dist ./dist
-
 CMD [ "npm", "run", "start:prod" ]
